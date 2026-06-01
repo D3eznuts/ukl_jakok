@@ -1,21 +1,42 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class ProductQueryDto {
+  @ApiPropertyOptional({
+    example: 'laptop',
+    description: 'Cari produk berdasarkan nama atau deskripsi.',
+  })
   @IsOptional()
   @IsString()
   search?: string;
 
+  @ApiPropertyOptional({
+    example: 'clx123categoryid',
+    description: 'Filter produk berdasarkan ID kategori.',
+  })
   @IsOptional()
   @IsString()
   categoryId?: string;
 
+  @ApiPropertyOptional({
+    example: 0,
+    description: 'Jumlah data yang dilewati untuk pagination.',
+    minimum: 0,
+    default: 0,
+  })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
   skip?: number;
 
+  @ApiPropertyOptional({
+    example: 20,
+    description: 'Jumlah maksimal data yang diambil.',
+    minimum: 1,
+    default: 20,
+  })
   @IsOptional()
   @Type(() => Number)
   @IsInt()

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { BcryptService } from '../bcrypt/bcrypt.service';
@@ -56,10 +60,16 @@ export class UserService {
     return this.prisma.user.update({
       where: { id },
       data: {
-        ...(updateUserDto.email !== undefined ? { email: updateUserDto.email } : {}),
+        ...(updateUserDto.email !== undefined
+          ? { email: updateUserDto.email }
+          : {}),
         ...(hashedPassword !== undefined ? { password: hashedPassword } : {}),
-        ...(updateUserDto.name !== undefined ? { name: updateUserDto.name } : {}),
-        ...(updateUserDto.role !== undefined ? { role: updateUserDto.role } : {}),
+        ...(updateUserDto.name !== undefined
+          ? { name: updateUserDto.name }
+          : {}),
+        ...(updateUserDto.role !== undefined
+          ? { role: updateUserDto.role }
+          : {}),
       },
       select: userSelect,
     });

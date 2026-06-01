@@ -18,7 +18,9 @@ const productInclude = {
   },
 } as const;
 
-type ProductWithCategory = Prisma.ProductGetPayload<{ include: typeof productInclude }>;
+type ProductWithCategory = Prisma.ProductGetPayload<{
+  include: typeof productInclude;
+}>;
 
 @Injectable()
 export class ProductService {
@@ -39,7 +41,9 @@ export class ProductService {
     const take = query.take ?? 20;
     const skip = query.skip ?? 0;
     const where: Prisma.ProductWhereInput = {
-      ...(query.categoryId !== undefined ? { categoryId: query.categoryId } : {}),
+      ...(query.categoryId !== undefined
+        ? { categoryId: query.categoryId }
+        : {}),
       ...(query.search !== undefined && query.search.trim() !== ''
         ? {
             OR: [

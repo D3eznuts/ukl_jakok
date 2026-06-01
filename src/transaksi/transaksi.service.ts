@@ -43,7 +43,9 @@ const orderInclude = {
   payment: true,
 } as const;
 
-type OrderWithRelations = Prisma.OrderGetPayload<{ include: typeof orderInclude }>;
+type OrderWithRelations = Prisma.OrderGetPayload<{
+  include: typeof orderInclude;
+}>;
 
 @Injectable()
 export class TransaksiService {
@@ -61,7 +63,9 @@ export class TransaksiService {
         },
       });
 
-      const productsById = new Map(products.map((product) => [product.id, product]));
+      const productsById = new Map(
+        products.map((product) => [product.id, product]),
+      );
       const missingProductIds = items
         .filter((item) => !productsById.has(item.productId))
         .map((item) => item.productId);
@@ -77,7 +81,9 @@ export class TransaksiService {
         const product = productsById.get(item.productId);
 
         if (!product) {
-          throw new NotFoundException(`Product with id ${item.productId} not found`);
+          throw new NotFoundException(
+            `Product with id ${item.productId} not found`,
+          );
         }
 
         if (product.stock < item.quantity) {
@@ -183,7 +189,9 @@ export class TransaksiService {
         updateTransaksiDto.status !== undefined &&
         updateTransaksiDto.status !== OrderStatus.CANCELED
       ) {
-        throw new BadRequestException('Transaksi yang sudah dibatalkan tidak bisa diaktifkan lagi');
+        throw new BadRequestException(
+          'Transaksi yang sudah dibatalkan tidak bisa diaktifkan lagi',
+        );
       }
 
       const shouldCancel =
@@ -221,7 +229,9 @@ export class TransaksiService {
             ...(updateTransaksiDto.paymentMethod !== undefined
               ? { method: updateTransaksiDto.paymentMethod }
               : {}),
-            ...(nextPaymentStatus !== undefined ? { status: nextPaymentStatus } : {}),
+            ...(nextPaymentStatus !== undefined
+              ? { status: nextPaymentStatus }
+              : {}),
           },
         });
       }
@@ -292,7 +302,10 @@ export class TransaksiService {
     const itemMap = new Map<string, number>();
 
     for (const item of items) {
-      itemMap.set(item.productId, (itemMap.get(item.productId) ?? 0) + item.quantity);
+      itemMap.set(
+        item.productId,
+        (itemMap.get(item.productId) ?? 0) + item.quantity,
+      );
     }
 
     return Array.from(itemMap.entries()).map(([productId, quantity]) => ({

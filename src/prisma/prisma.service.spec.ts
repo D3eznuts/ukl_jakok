@@ -1,6 +1,10 @@
-jest.mock('generated/prisma/client', () => ({
-  PrismaClient: class PrismaClientMock {},
-}), { virtual: true });
+jest.mock(
+  'generated/prisma/client',
+  () => ({
+    PrismaClient: class PrismaClientMock {},
+  }),
+  { virtual: true },
+);
 
 jest.mock('@prisma/adapter-mariadb', () => ({
   PrismaMariaDb: class PrismaMariaDbMock {},
