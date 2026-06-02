@@ -1,10 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useStaticAssets(join(process.cwd(), 'public'), {
+    prefix: '/assets/',
+  });
+  app.useStaticAssets(join(process.cwd(), 'node_modules', 'three', 'build'), {
+    prefix: '/vendor/three/',
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -12,9 +21,14 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
+app.enableCors({
+    origin: 'localhost:3000',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Toko Elektronik API')
+    .setTitle('ElectroTech')
     .setDescription(
       [
         'Dokumentasi REST API untuk toko elektronik sederhana.',
@@ -51,7 +65,9 @@ async function bootstrap() {
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, swaggerDocument, {
-    customSiteTitle: 'Toko Elektronik API Docs',
+    customSiteTitle: 'ElectroTech API Docs',
+    customCssUrl: '/assets/swagger/swagger-theme.css',
+    customJs: '/assets/swagger/swagger-scene.js',
     swaggerOptions: {
       persistAuthorization: true,
       tagsSorter: 'alpha',
