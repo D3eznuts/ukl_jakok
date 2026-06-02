@@ -1,17 +1,35 @@
-import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { AuthRole } from '../auth/auth.types';
 
 @ApiTags('Users')
+@ApiBearerAuth('access-token')
 @Controller('user')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(AuthRole.ADMIN)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -33,6 +51,12 @@ export class UserController {
         },
       ],
     },
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Token tidak valid atau tidak dikirim.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User bukan ADMIN.',
   })
   findAll() {
     return this.userService.findAll();
@@ -61,6 +85,12 @@ export class UserController {
   })
   @ApiNotFoundResponse({
     description: 'User tidak ditemukan.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Token tidak valid atau tidak dikirim.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User bukan ADMIN.',
   })
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
@@ -94,6 +124,12 @@ export class UserController {
   @ApiNotFoundResponse({
     description: 'User tidak ditemukan.',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Token tidak valid atau tidak dikirim.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User bukan ADMIN.',
+  })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
@@ -121,6 +157,12 @@ export class UserController {
   })
   @ApiNotFoundResponse({
     description: 'User tidak ditemukan.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Token tidak valid atau tidak dikirim.',
+  })
+  @ApiForbiddenResponse({
+    description: 'User bukan ADMIN.',
   })
   remove(@Param('id') id: string) {
     return this.userService.remove(id);

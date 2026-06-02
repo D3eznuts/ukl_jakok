@@ -56,6 +56,7 @@ export class CategoryService {
             price: true,
             stock: true,
             imageUrl: true,
+            categoryId: true,
           },
           orderBy: {
             name: 'asc',
