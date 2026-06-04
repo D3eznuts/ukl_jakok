@@ -39,11 +39,12 @@ app.enableCors({
         'Dokumentasi REST API untuk toko elektronik sederhana.',
         '',
         'Alur umum penggunaan:',
-        '1. Register atau login melalui endpoint Auth.',
-        '2. Klik tombol Authorize dan masukkan token dengan format: Bearer <accessToken>.',
-        '3. Admin membuat kategori dan produk.',
-        '4. User membuat transaksi checkout dari produk yang tersedia.',
-        '5. Admin memperbarui status pembayaran dan pesanan.',
+        '1. Register melalui endpoint Auth untuk membuat akun.',
+        '2. Login melalui endpoint Auth untuk mendapatkan accessToken.',
+        '3. Klik tombol Authorize dan masukkan token dengan format: Bearer <accessToken>.',
+        '4. Admin membuat kategori dan produk.',
+        '5. User membuat transaksi checkout dari produk yang tersedia.',
+        '6. Admin memperbarui status pembayaran dan pesanan.',
       ].join('\n'),
     )
     .setVersion('1.0.0')
@@ -53,7 +54,7 @@ app.enableCors({
         scheme: 'bearer',
         bearerFormat: 'JWT',
         description:
-          'Masukkan token JWT dari response login/register. Format: Bearer <accessToken>.',
+          'Masukkan token JWT dari response login. Format: Bearer <accessToken>.',
       },
       'access-token',
     )

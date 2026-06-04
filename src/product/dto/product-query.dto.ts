@@ -12,12 +12,12 @@ export class ProductQueryDto {
   search?: string;
 
   @ApiPropertyOptional({
-    example: 'clx123categoryid',
-    description: 'Filter produk berdasarkan ID kategori.',
+    example: 'Laptop',
+    description: 'Filter produk berdasarkan nama kategori.',
   })
   @IsOptional()
   @IsString()
-  categoryId?: string;
+  categoryName?: string;
 
   @ApiPropertyOptional({
     example: 0,

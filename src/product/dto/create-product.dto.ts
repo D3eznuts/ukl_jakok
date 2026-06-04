@@ -58,10 +58,13 @@ export class CreateProductDto {
   imageUrl!: string;
 
   @ApiProperty({
-    example: 'clx123categoryid',
-    description: 'ID kategori tempat produk ini masuk.',
+    example: 'Laptop',
+    description:
+      'Nama kategori tempat produk ini masuk. Sistem akan menghubungkan atau membuat kategori otomatis.',
+    minLength: 2,
   })
   @IsString()
   @IsNotEmpty()
-  categoryId!: string;
+  @MinLength(2)
+  categoryName!: string;
 }

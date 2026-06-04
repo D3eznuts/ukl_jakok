@@ -33,7 +33,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(createAuthDto: CreateAuthDto): Promise<AuthResponse> {
+  async register(createAuthDto: CreateAuthDto): Promise<AuthUser> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: createAuthDto.email },
     });
@@ -46,7 +46,7 @@ export class AuthService {
       createAuthDto.password,
     );
 
-    const user = await this.prisma.user.create({
+    return this.prisma.user.create({
       data: {
         name: createAuthDto.name,
         email: createAuthDto.email,
@@ -55,8 +55,6 @@ export class AuthService {
       },
       select: publicUserSelect,
     });
-
-    return this.buildAuthResponse(user);
   }
 
   async login(loginAuthDto: LoginAuthDto): Promise<AuthResponse> {

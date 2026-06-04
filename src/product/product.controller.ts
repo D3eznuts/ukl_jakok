@@ -43,7 +43,7 @@ export class ProductController {
   @ApiOperation({
     summary: 'Buat produk',
     description:
-      'Menambahkan produk elektronik baru ke katalog. Category ID harus sudah ada. Endpoint ini khusus ADMIN.',
+      'Menambahkan produk elektronik baru ke katalog. Kategori dikirim sebagai nama, misalnya Laptop. Jika belum ada, sistem akan membuat kategori otomatis. Endpoint ini khusus ADMIN.',
   })
   @ApiCreatedResponse({
     description: 'Produk berhasil dibuat.',
@@ -55,9 +55,7 @@ export class ProductController {
         price: 7500000,
         stock: 15,
         imageUrl: 'https://example.com/images/asus-vivobook-14.jpg',
-        categoryId: 'clx123categoryid',
         category: {
-          id: 'clx123categoryid',
           name: 'Laptop',
         },
       },
@@ -71,9 +69,6 @@ export class ProductController {
   })
   @ApiForbiddenResponse({
     description: 'User bukan ADMIN.',
-  })
-  @ApiNotFoundResponse({
-    description: 'Kategori tidak ditemukan.',
   })
   create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
@@ -92,10 +87,10 @@ export class ProductController {
     description: 'Cari berdasarkan nama atau deskripsi produk.',
   })
   @ApiQuery({
-    name: 'categoryId',
+    name: 'categoryName',
     required: false,
-    example: 'clx123categoryid',
-    description: 'Filter produk berdasarkan ID kategori.',
+    example: 'Laptop',
+    description: 'Filter produk berdasarkan nama kategori.',
   })
   @ApiQuery({
     name: 'skip',
@@ -121,9 +116,7 @@ export class ProductController {
             price: 7500000,
             stock: 15,
             imageUrl: 'https://example.com/images/asus-vivobook-14.jpg',
-            categoryId: 'clx123categoryid',
             category: {
-              id: 'clx123categoryid',
               name: 'Laptop',
             },
           },
@@ -160,9 +153,7 @@ export class ProductController {
         price: 7500000,
         stock: 15,
         imageUrl: 'https://example.com/images/asus-vivobook-14.jpg',
-        categoryId: 'clx123categoryid',
         category: {
-          id: 'clx123categoryid',
           name: 'Laptop',
         },
       },
@@ -199,9 +190,7 @@ export class ProductController {
         price: 9500000,
         stock: 10,
         imageUrl: 'https://example.com/images/asus-vivobook-14-oled.jpg',
-        categoryId: 'clx123categoryid',
         category: {
-          id: 'clx123categoryid',
           name: 'Laptop',
         },
       },
@@ -217,7 +206,7 @@ export class ProductController {
     description: 'User bukan ADMIN.',
   })
   @ApiNotFoundResponse({
-    description: 'Produk atau kategori tidak ditemukan.',
+    description: 'Produk tidak ditemukan.',
   })
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(id, updateProductDto);
@@ -247,9 +236,7 @@ export class ProductController {
         price: 7500000,
         stock: 15,
         imageUrl: 'https://example.com/images/asus-vivobook-14.jpg',
-        categoryId: 'clx123categoryid',
         category: {
-          id: 'clx123categoryid',
           name: 'Laptop',
         },
       },

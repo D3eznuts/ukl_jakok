@@ -12,7 +12,6 @@ import { UpdateProductDto } from './dto/update-product.dto';
 const productInclude = {
   category: {
     select: {
-      id: true,
       name: true,
     },
   },
@@ -27,10 +26,18 @@ export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto) {
-    await this.ensureCategoryExists(createProductDto.categoryId);
+    const { categoryName, ...productData } = createProductDto;
 
     const product = await this.prisma.product.create({
-      data: createProductDto,
+      data: {
+        ...productData,
+        category: {
+          connectOrCreate: {
+            where: { name: categoryName },
+            create: { name: categoryName },
+          },
+        },
+      },
       include: productInclude,
     });
 
@@ -40,21 +47,29 @@ export class ProductService {
   async findAll(query: ProductQueryDto) {
     const take = query.take ?? 20;
     const skip = query.skip ?? 0;
+    const search = query.search?.trim();
+    const categoryName = query.categoryName?.trim();
     const where: Prisma.ProductWhereInput = {
-      ...(query.categoryId !== undefined
-        ? { categoryId: query.categoryId }
+      ...(categoryName !== undefined && categoryName !== ''
+        ? {
+            category: {
+              name: {
+                contains: categoryName,
+              },
+            },
+          }
         : {}),
-      ...(query.search !== undefined && query.search.trim() !== ''
+      ...(search !== undefined && search !== ''
         ? {
             OR: [
               {
                 name: {
-                  contains: query.search,
+                  contains: search,
                 },
               },
               {
                 description: {
-                  contains: query.search,
+                  contains: search,
                 },
               },
             ],
@@ -102,13 +117,23 @@ export class ProductService {
       throw new BadRequestException('No update data provided');
     }
 
-    if (updateProductDto.categoryId !== undefined) {
-      await this.ensureCategoryExists(updateProductDto.categoryId);
-    }
+    const { categoryName, ...productData } = updateProductDto;
 
     const product = await this.prisma.product.update({
       where: { id },
-      data: updateProductDto,
+      data: {
+        ...productData,
+        ...(categoryName !== undefined
+          ? {
+              category: {
+                connectOrCreate: {
+                  where: { name: categoryName },
+                  create: { name: categoryName },
+                },
+              },
+            }
+          : {}),
+      },
       include: productInclude,
     });
 
@@ -138,21 +163,6 @@ export class ProductService {
     return this.formatProduct(product);
   }
 
-  private async ensureCategoryExists(categoryId: string) {
-    const category = await this.prisma.category.findUnique({
-      where: {
-        id: categoryId,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!category) {
-      throw new NotFoundException(`Category with id ${categoryId} not found`);
-    }
-  }
-
   private async findProductOrThrow(id: string) {
     const product = await this.prisma.product.findUnique({
       where: { id },
@@ -174,7 +184,6 @@ export class ProductService {
       price: Number(product.price),
       stock: product.stock,
       imageUrl: product.imageUrl,
-      categoryId: product.categoryId,
       category: product.category,
     };
   }

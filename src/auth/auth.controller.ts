@@ -29,20 +29,16 @@ export class AuthController {
   @ApiOperation({
     summary: 'Register user baru',
     description:
-      'Membuat akun pembeli baru dengan role USER dan langsung mengembalikan accessToken untuk login.',
+      'Membuat akun pembeli baru dengan role USER. Login melalui endpoint /auth/login untuk mendapatkan accessToken.',
   })
   @ApiCreatedResponse({
     description: 'Register berhasil.',
     schema: {
       example: {
-        accessToken: 'jwt-token',
-        tokenType: 'Bearer',
-        user: {
-          id: 'clx123userid',
-          email: 'budi@example.com',
-          name: 'Budi Santoso',
-          role: 'USER',
-        },
+        id: 'clx123userid',
+        email: 'budi@example.com',
+        name: 'Budi Santoso',
+        role: 'USER',
       },
     },
   })
